@@ -196,25 +196,29 @@ def main(
     hmmtbl = pd.read_table(hmmtbl_file).rename({"target_name": "protein"}, axis=1)[
         KEEP_COLS
     ]
-    hmmtbl[["scaffold", "protein_id"]] = hmmtbl["protein"].str.rsplit(
-        "_", n=1, expand=True
-    )
-    hmmtbl = hmmtbl.astype({"protein_id": int})
 
-    orf_summary = pd.read_table(orf_file)
-    metadata = pd.read_table(metadata_file).rename(
-        {"hmm_name": "query_name", "gene": "gene_name"}, axis=1
-    )
+    if len(hmmtbl) > 0:
+        hmmtbl[["scaffold", "protein_id"]] = hmmtbl["protein"].str.rsplit(
+            "_", n=1, expand=True
+        )
+        hmmtbl = hmmtbl.astype({"protein_id": int})
 
-    hits = (
-        hmmtbl.merge(orf_summary, on="protein")
-        .merge(metadata)
-        .sort_values(by=["genome", "scaffold", "protein_id"])
-    )[COL_ORDER]
-    # choose_best(hits, output, mode)
-    hits = filter_operons(hits, distance_thresh)
-    hits.to_csv(output, sep="\t", index=False)
+        orf_summary = pd.read_table(orf_file)
+        metadata = pd.read_table(metadata_file).rename(
+            {"hmm_name": "query_name", "gene": "gene_name"}, axis=1
+        )
 
-    imgdir = outdir.joinpath("operon_plots")
-    imgdir.mkdir(exist_ok=True)
-    plot_operons(hits, imgdir, operon, anchor_gene)
+        hits = (
+            hmmtbl.merge(orf_summary, on="protein")
+            .merge(metadata)
+            .sort_values(by=["genome", "scaffold", "protein_id"])
+        )[COL_ORDER]
+        # choose_best(hits, output, mode)
+        hits = filter_operons(hits, distance_thresh)
+        hits.to_csv(output, sep="\t", index=False)
+
+        imgdir = outdir.joinpath("operon_plots")
+        imgdir.mkdir(exist_ok=True)
+        plot_operons(hits, imgdir, operon, anchor_gene)
+    else:
+        print("No hmmsearch hits were detected, so no operons can be found.")
