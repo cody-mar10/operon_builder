@@ -148,7 +148,7 @@ def plot_operons(
                 feature = GraphicFeature(
                     start=row.start,
                     end=row.end,
-                    strand=row.strand if not invert else row.strand * -1,
+                    strand=row.strand,
                     label=row.gene_name,
                     color=row.color,
                 )
@@ -162,6 +162,8 @@ def plot_operons(
                 features=features,
             )
             record.plot(ax=ax, level_offset=0)
+            if invert:
+                ax.invert_xaxis()
             ax.set_title(f"Scaffold: {scaffold}")
         fig.tight_layout(pad=0.75)
         fig.savefig(outdir.joinpath(f"{genome}_{operon}.png").as_posix())
