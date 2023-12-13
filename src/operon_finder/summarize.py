@@ -35,6 +35,8 @@ COL_ORDER = [
     "color",
 ]
 
+SENTINEL_DISTANCE_THRESHOLD = -1
+
 
 class Mode(str, Enum):
     genome = "genome"
@@ -98,17 +100,17 @@ def filter_operons(hits: pd.DataFrame, distance_thresh: int = 20) -> pd.DataFram
         .rename_axis(None, axis=0)
         .rename({"protein_id": "downstream_dist"}, axis=1)
     )["downstream_dist"]
-    hits = (
-        reduce(
-            lambda left, right: pd.concat([left, right], axis=1),
-            [hits, upstream, downstream],
-        )
-        .fillna(distance_thresh + 1)
-        .assign(gene_name=lambda df: df["query_name"].str.extract("(dsr[A-Z])"))
-        .query(
+
+    hits = reduce(
+        lambda left, right: pd.concat([left, right], axis=1),
+        [hits, upstream, downstream],
+    ).fillna(distance_thresh + 1)
+
+    if distance_thresh == SENTINEL_DISTANCE_THRESHOLD:
+        return hits.query(
             "upstream_dist <= @distance_thresh | downstream_dist <= @distance_thresh"
         )
-    )
+
     return hits
 
 
@@ -215,6 +217,7 @@ def main(
             .merge(metadata)
             .sort_values(by=["genome", "scaffold", "protein_id"])
         )[COL_ORDER]
+
         # choose_best(hits, output, mode)
         hits = filter_operons(hits, distance_thresh)
         hits.to_csv(output, sep="\t", index=False)

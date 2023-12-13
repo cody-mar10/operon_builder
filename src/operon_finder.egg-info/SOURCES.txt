@@ -1,0 +1,16 @@
+LICENSE
+README.md
+pyproject.toml
+src/operon_finder/__init__.py
+src/operon_finder/fastaparser.py
+src/operon_finder/hmmsearch.py
+src/operon_finder/operon_builder.py
+src/operon_finder/prodigal.py
+src/operon_finder/summarize.py
+src/operon_finder/utils.py
+src/operon_finder.egg-info/PKG-INFO
+src/operon_finder.egg-info/SOURCES.txt
+src/operon_finder.egg-info/dependency_links.txt
+src/operon_finder.egg-info/entry_points.txt
+src/operon_finder.egg-info/requires.txt
+src/operon_finder.egg-info/top_level.txt

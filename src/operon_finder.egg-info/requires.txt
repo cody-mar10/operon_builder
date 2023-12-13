@@ -1,0 +1,4 @@
+dna_features_viewer
+pandas
+numpy
+matplotlib

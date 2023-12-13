@@ -1,10 +1,9 @@
 """Run prodigal orf prediction with a custom cleaning step for the fasta headers"""
-import subprocess
 import shlex
-
+import subprocess
 from pathlib import Path
 
-from fastaparser import fastaparser, write_fasta
+from operon_finder.fastaparser import fastaparser, write_fasta
 
 
 def run_prodigal(fastafile: Path, outdir: Path) -> Path:
